@@ -1,0 +1,23 @@
+name: gem test
+
+on: [push, pull_request]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby: [ '2.5.7', '2.6.5', '2.7.0' ]
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set up Ruby version
+        uses: actions/setup-ruby@master
+        with:
+          version: ${{ matrix.ruby }}
+
+      - run: gem install bundler --no-document
+      - run: bundle install --jobs 4 --retry 3
+      - run: bundle exec rake spec
