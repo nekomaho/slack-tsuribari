@@ -21,7 +21,7 @@ module SlackTsuribari
       @no_proxy = options[:no_proxy] || nil
     end
 
-    def post(data, header = 'application/json')
+    def post(data, header = {"Content-Type" => "application/json"})
       Net::HTTP.new(host, port, proxy_addr, proxy_port, proxy_user, proxy_pass, no_proxy).yield_self do |http|
         http.use_ssl = scheme == "https"
         http.post(path, data, header)

@@ -59,6 +59,6 @@ RSpec.describe SlackTsuribari::Connection do
       end
     end
 
-    it { is_expected.to eq ['/test', '{test: 1}', 'application/json'] }
+    it { is_expected.to eq ['/test', '{test: 1}', "Content-Type" => "application/json"] }
   end
 end
