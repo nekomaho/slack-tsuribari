@@ -1,8 +1,5 @@
 # SlackTsuribari
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/slack_tsuribari`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+SlackTsuribari is a Slack Incoming Webhook wrapper for ruby.
 
 ## Installation
 
@@ -21,8 +18,15 @@ Or install it yourself as:
     $ gem install slack_tsuribari
 
 ## Usage
+To post a message to slack, create a hook object and send data with Angler.throw!.
 
-TODO: Write usage instructions here
+```ruby
+hook = SlackTsuribari::Hook.config('https://hooks.slack.com/services/')
+SlackTsuribari::Angler.throw!(hook, {text: 'test'})
+```
+
+The second argument of throw! can specify the payload of slack's Incoming Webhook.
+See Setup Instructions of Incoming Webhook for arguments that can be specified in the payload.
 
 ## Development
 
