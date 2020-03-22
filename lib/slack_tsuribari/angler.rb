@@ -14,4 +14,3 @@ module SlackTsuribari
     end
   end
 end
-

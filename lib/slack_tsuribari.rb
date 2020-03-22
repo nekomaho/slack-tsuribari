@@ -1,4 +1,6 @@
-require "slack_tsuribari/version"
+# frozen_string_literal: true
+
+require 'slack_tsuribari/version'
 
 module SlackTsuribari
   require 'slack_tsuribari/connection'

@@ -1,0 +1,37 @@
+AllCops:
+  Exclude:
+    - "slack_tsuribari.gemspec"
+    - "Gemfile"
+    - "Rakefile"
+    - "bin/*"
+    - "slack_tsuribari/version.rb"
+    - "spec/spec_helper.rb"
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 20
+
+Layout/LineLength:
+  Max: 120
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+Metrics/ParameterLists:
+  Enabled: false
+
+
+Style/HashEachMethods:
+  Enabled: false
+
+Style/HashTransformKeys:
+  Enabled: false
+
+Style/HashTransformValues:
+  Enabled: false

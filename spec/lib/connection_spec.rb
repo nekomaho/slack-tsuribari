@@ -11,7 +11,7 @@ RSpec.describe SlackTsuribari::Connection do
         subject.tap do |conn|
           expect(conn.scheme).to eq 'https'
           expect(conn.host).to eq 'test.co.jp'
-          expect(conn.port).to eq 49990
+          expect(conn.port).to eq 49_990
           expect(conn.path).to eq '/test'
           expect(conn.proxy_addr).to eq :ENV
           expect(conn.proxy_port).to be_nil
@@ -38,7 +38,7 @@ RSpec.describe SlackTsuribari::Connection do
         subject.tap do |conn|
           expect(conn.scheme).to eq 'https'
           expect(conn.host).to eq 'test.co.jp'
-          expect(conn.port).to eq 49990
+          expect(conn.port).to eq 49_990
           expect(conn.path).to eq '/test'
           expect(conn.proxy_addr).to eq '127.0.0.1'
           expect(conn.proxy_port).to eq 80
@@ -59,6 +59,6 @@ RSpec.describe SlackTsuribari::Connection do
       end
     end
 
-    it { is_expected.to eq ['/test', '{test: 1}', "Content-Type" => "application/json"] }
+    it { is_expected.to eq ['/test', '{test: 1}', 'Content-Type' => 'application/json'] }
   end
 end

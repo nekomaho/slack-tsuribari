@@ -48,7 +48,7 @@ RSpec.describe SlackTsuribari::Hook do
       end
     end
 
-    it { is_expected.to eq({text: 'test'}.to_json) }
+    it { is_expected.to eq({ text: 'test' }.to_json) }
   end
 
   describe '#attach' do
