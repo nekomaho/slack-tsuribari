@@ -16,7 +16,7 @@ jobs:
       - name: Set up Ruby version
         uses: actions/setup-ruby@master
         with:
-          version: ${{ matrix.ruby }}
+          ruby-version: ${{ matrix.ruby }}
 
       - run: gem install bundler --no-document
       - run: bundle install --jobs 4 --retry 3
