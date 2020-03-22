@@ -18,11 +18,23 @@ Or install it yourself as:
     $ gem install slack_tsuribari
 
 ## Usage
-To post a message to slack, create a hook object and send data with Angler.throw!.
+To post a message to a slack an easy way, create a hook object and send data with Angler.easy_throw!.
+```ruby
+hook = SlackTsuribari::Hook.config('https://hooks.slack.com/services/')
+SlackTsuribari::Angler.easy_throw!(hook, 'test message')
+```
+Use Angler.throw! If you need a bit more control, like adding color.
 
 ```ruby
 hook = SlackTsuribari::Hook.config('https://hooks.slack.com/services/')
-SlackTsuribari::Angler.throw!(hook, {text: 'test'})
+payload = {
+  attachments: [
+    fallback: 'test message',
+    text: 'test message',
+    color: '#00FF00',
+  ]
+}
+SlackTsuribari::Angler.throw!(hook, payload)
 ```
 
 The second argument of throw! can specify the payload of slack's Incoming Webhook.
