@@ -20,13 +20,13 @@ Or install it yourself as:
 ## Usage
 To post a message to a slack an easy way, create a hook object and send data with Angler.easy_throw!.
 ```ruby
-hook = SlackTsuribari::Hook.config('https://hooks.slack.com/services/')
+hook = SlackTsuribari::Hook.config('https://hooks.slack.com/services/webhook_url')
 SlackTsuribari::Angler.easy_throw!(hook, 'test message')
 ```
 Use Angler.throw! If you need a bit more control, like adding color.
 
 ```ruby
-hook = SlackTsuribari::Hook.config('https://hooks.slack.com/services/')
+hook = SlackTsuribari::Hook.config('https://hooks.slack.com/services/webhook_url')
 payload = {
   attachments: [
     fallback: 'test message',
@@ -45,7 +45,7 @@ If a proxy is needed, it can be configured as follows
 
 ```ruby
 hook = SlackTsuribari::Hook.config do |config|
-  config.uri = 'https://test.co.jp/hook'
+  config.uri = 'https://hooks.slack.com/services/webhook_url'
   config.proxy_addr = '127.0.0.1'
   config.proxy_port = 8080
   config.proxy_user = 'test'
