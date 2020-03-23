@@ -18,7 +18,7 @@ module SlackTsuribari
 
       def throw_action(hook, payload, auto_detach)
         hook.attach(payload) unless payload.nil?
-        Connection.new(hook.uri).post(hook.payload_to_json).tap do
+        Connection.new(hook.uri, hook.proxy_setting).post(hook.payload_to_json).tap do
           hook.detach if auto_detach
         end
       end

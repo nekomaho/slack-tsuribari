@@ -40,6 +40,31 @@ RSpec.describe SlackTsuribari::Hook do
     it { is_expected.to eq 'https://test.co.jp/' }
   end
 
+  describe '#proxy_setting' do
+    subject do
+      described_class.config do |config|
+        config[:uri] = 'https://test.co.jp/'
+        config[:proxy_addr] = '127.0.0.1'
+        config[:proxy_port] = 8080
+        config[:proxy_user] = 'test'
+        config[:proxy_pass] = 'password'
+        config[:no_proxy] = '192.168.1.1'
+      end.proxy_setting
+    end
+
+    let(:result) do
+      {
+        proxy_addr: '127.0.0.1',
+        proxy_port: 8080,
+        proxy_user: 'test',
+        proxy_pass: 'password',
+        no_proxy: '192.168.1.1'
+      }
+    end
+
+    it { is_expected.to eq result }
+  end
+
   describe '#payload_to_json' do
     subject do
       described_class.new({ uri: 'https://test.co.jp/' }).yield_self do |hook|
