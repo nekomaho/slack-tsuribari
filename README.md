@@ -40,6 +40,21 @@ SlackTsuribari::Angler.throw!(hook, payload)
 The second argument of throw! can specify the payload of slack's Incoming Webhook.
 See Setup Instructions of Incoming Webhook for arguments that can be specified in the payload.
 
+### proxy setting
+If a proxy is needed, it can be configured as follows
+
+```ruby
+hook = SlackTsuribari::Hook.config do |config|
+  config.uri = 'https://test.co.jp/hook'
+  config.proxy_addr = '127.0.0.1'
+  config.proxy_port = 8080
+  config.proxy_user = 'test'
+  config.proxy_pass = 'password'
+  config.no_proxy = '192.168.1.1'
+end
+SlackTsuribari::Angler.easy_throw!(hook, 'test message')
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

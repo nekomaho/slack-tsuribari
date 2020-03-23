@@ -12,11 +12,7 @@ RSpec.describe SlackTsuribari::Hook do
         end.config
       end
 
-      let(:result) do
-        {
-          uri: 'https://test.co.jp/'
-        }
-      end
+      let(:result) { SlackTsuribari::Hook::Config.new('https://test.co.jp/', nil, nil, nil, nil, nil) }
 
       it { is_expected.to eq result }
     end
@@ -24,18 +20,14 @@ RSpec.describe SlackTsuribari::Hook do
     context 'with no block' do
       subject { described_class.config('https://test.co.jp/').config }
 
-      let(:result) do
-        {
-          uri: 'https://test.co.jp/'
-        }
-      end
+      let(:result) { SlackTsuribari::Hook::Config.new('https://test.co.jp/', nil, nil, nil, nil, nil) }
 
       it { is_expected.to eq result }
     end
   end
 
   describe '#uri' do
-    subject { described_class.new({ uri: 'https://test.co.jp/' }).uri }
+    subject { described_class.config('https://test.co.jp/').uri }
 
     it { is_expected.to eq 'https://test.co.jp/' }
   end
@@ -43,12 +35,12 @@ RSpec.describe SlackTsuribari::Hook do
   describe '#proxy_setting' do
     subject do
       described_class.config do |config|
-        config[:uri] = 'https://test.co.jp/'
-        config[:proxy_addr] = '127.0.0.1'
-        config[:proxy_port] = 8080
-        config[:proxy_user] = 'test'
-        config[:proxy_pass] = 'password'
-        config[:no_proxy] = '192.168.1.1'
+        config.uri = 'https://test.co.jp/'
+        config.proxy_addr = '127.0.0.1'
+        config.proxy_port = 8080
+        config.proxy_user = 'test'
+        config.proxy_pass = 'password'
+        config.no_proxy = '192.168.1.1'
       end.proxy_setting
     end
 

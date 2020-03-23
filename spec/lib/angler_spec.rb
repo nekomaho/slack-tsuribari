@@ -63,12 +63,12 @@ RSpec.describe SlackTsuribari::Angler do
 
       let(:hook) do
         SlackTsuribari::Hook.config do |config|
-          config[:uri] = 'https://test.co.jp/hook'
-          config[:proxy_addr] = '127.0.0.1'
-          config[:proxy_port] = 8080
-          config[:proxy_user] = 'test'
-          config[:proxy_pass] = 'password'
-          config[:no_proxy] = '192.168.1.1'
+          config.uri = 'https://test.co.jp/hook'
+          config.proxy_addr = '127.0.0.1'
+          config.proxy_port = 8080
+          config.proxy_user = 'test'
+          config.proxy_pass = 'password'
+          config.no_proxy = '192.168.1.1'
         end
       end
       let(:payload) { { text: 'something' } }
@@ -182,12 +182,12 @@ RSpec.describe SlackTsuribari::Angler do
 
       let(:hook) do
         SlackTsuribari::Hook.config do |config|
-          config[:uri] = 'https://test.co.jp/hook'
-          config[:proxy_addr] = '127.0.0.1'
-          config[:proxy_port] = 8080
-          config[:proxy_user] = 'test'
-          config[:proxy_pass] = 'password'
-          config[:no_proxy] = '192.168.1.1'
+          config.uri = 'https://test.co.jp/hook'
+          config.proxy_addr = '127.0.0.1'
+          config.proxy_port = 8080
+          config.proxy_user = 'test'
+          config.proxy_pass = 'password'
+          config.no_proxy = '192.168.1.1'
         end
       end
       let(:payload) { { text: 'something' } }
