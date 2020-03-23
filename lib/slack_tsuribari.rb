@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-require 'slack_tsuribari/version'
+require_relative 'slack_tsuribari/version'
 
-module SlackTsuribari
-  require 'slack_tsuribari/connection'
-  require 'slack_tsuribari/hook'
-  require 'slack_tsuribari/angler'
-end
+require_relative 'slack_tsuribari/hook'
+require_relative 'slack_tsuribari/angler'
