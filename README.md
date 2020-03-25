@@ -38,7 +38,8 @@ SlackTsuribari::Angler.throw!(hook, payload)
 ```
 
 The second argument of throw! can specify the payload of slack's Incoming Webhook.
-See Setup Instructions of Incoming Webhook for arguments that can be specified in the payload.
+See Setup Instructions of Incoming Webhook and [Adding secondary attachment](https://api.slack.com/messaging/composing/layouts#attachments)
+for arguments that can be specified in the payload.
 
 ### proxy setting
 If a proxy is needed, it can be configured as follows
