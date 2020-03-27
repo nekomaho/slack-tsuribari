@@ -56,6 +56,50 @@ end
 SlackTsuribari::Angler.easy_throw!(hook, 'test message')
 ```
 
+### pre payload setting
+In config you can also set the `channel`, `username`, `text` and icon to post.
+The `channel` is set when you change the channel to post.
+```ruby
+hook = SlackTsuribari::Hook.config do |config|
+  config.pre_payload.channel = 'sample_channel'
+end
+
+```
+
+The `username` allows you to change the name of the post.
+```ruby
+hook = SlackTsuribari::Hook.config do |config|
+  config.pre_payload.username = 'Robot'
+end
+```
+
+The `text` allows you to set the text to be posted. If text is specified with `easy_throw!` or `throw!`, its setting is preferred.
+```ruby
+hook = SlackTsuribari::Hook.config do |config|
+  config.pre_payload.text = 'pre payload text'
+end
+SlackTsuribari::Angler.easy_throw!(hook) # => throw 'pre payload text'
+SlackTsuribari::Angler.throw!(hook) # => throw 'pre payload text'
+
+SlackTsuribari::Angler.easy_throw!(hook, 'text') # => throw 'text'
+SlackTsuribari::Angler.throw!(hook, {text: 'text'}) # => throw 'text'
+```
+
+If you want to set an icon, put a value in either `icon_url` or `icon_emoji`.
+The `icon_url` is the URL of the icon.
+The `icon_emoji` is the text of the emoji to be set for the icon.
+```ruby
+hook = SlackTsuribari::Hook.config do |config|
+  config.pre_payload.icon_url = 'path to icon url'
+end
+```
+
+```ruby
+hook = SlackTsuribari::Hook.config do |config|
+  config.pre_payload.icon_emoji = ':+1:'
+end
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

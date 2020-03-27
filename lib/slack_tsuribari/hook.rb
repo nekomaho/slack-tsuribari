@@ -4,11 +4,28 @@ require 'json'
 
 module SlackTsuribari
   class Hook
-    Config = Struct.new(:uri, :proxy_addr, :proxy_port, :proxy_user, :proxy_pass, :no_proxy)
+    PrePayload = Struct.new(:channel, :username, :text, :icon_url, :icon_emoji) do
+      def to_h
+        %I[channel username text icon_url icon_emoji].each_with_object({}) do |attr, hash|
+          hash[attr] = send(attr) unless send(attr).nil?
+        end
+      end
+    end
+
+    Config = Struct.new(
+      :uri,
+      :proxy_addr,
+      :proxy_port,
+      :proxy_user,
+      :proxy_pass,
+      :no_proxy,
+      :pre_payload,
+      keyword_init: true
+    )
 
     class << self
       def config(uri = nil)
-        config = Config.new
+        config = Config.new(pre_payload: PrePayload.new)
 
         if block_given?
           yield(config)
@@ -44,7 +61,7 @@ module SlackTsuribari
     end
 
     def attach(payload)
-      @payload = payload
+      @payload = config.pre_payload.to_h.merge(payload)
     end
 
     def detach
