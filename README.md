@@ -61,21 +61,25 @@ In config you can also set the `channel`, `username`, `text` and icon to post.
 The `channel` is set when you change the channel to post.
 ```ruby
 hook = SlackTsuribari::Hook.config do |config|
+  config.uri = 'https://hooks.slack.com/services/webhook_url'
   config.pre_payload.channel = 'sample_channel'
 end
-
+SlackTsuribari::Angler.easy_throw!(hook, 'test message')
 ```
 
 The `username` allows you to change the name of the post.
 ```ruby
 hook = SlackTsuribari::Hook.config do |config|
+  config.uri = 'https://hooks.slack.com/services/webhook_url'
   config.pre_payload.username = 'Robot'
 end
+SlackTsuribari::Angler.easy_throw!(hook, 'test message')
 ```
 
 The `text` allows you to set the text to be posted. If text is specified with `easy_throw!` or `throw!`, its setting is preferred.
 ```ruby
 hook = SlackTsuribari::Hook.config do |config|
+  config.uri = 'https://hooks.slack.com/services/webhook_url'
   config.pre_payload.text = 'pre payload text'
 end
 SlackTsuribari::Angler.easy_throw!(hook) # => throw 'pre payload text'
@@ -90,14 +94,18 @@ The `icon_url` is the URL of the icon.
 The `icon_emoji` is the text of the emoji to be set for the icon.
 ```ruby
 hook = SlackTsuribari::Hook.config do |config|
+  config.uri = 'https://hooks.slack.com/services/webhook_url'
   config.pre_payload.icon_url = 'path to icon url'
 end
+SlackTsuribari::Angler.easy_throw!(hook, 'test message')
 ```
 
 ```ruby
 hook = SlackTsuribari::Hook.config do |config|
+  config.uri = 'https://hooks.slack.com/services/webhook_url'
   config.pre_payload.icon_emoji = ':+1:'
 end
+SlackTsuribari::Angler.easy_throw!(hook, 'test message')
 ```
 
 ## Development
