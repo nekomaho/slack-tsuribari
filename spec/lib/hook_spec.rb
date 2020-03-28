@@ -58,6 +58,24 @@ RSpec.describe SlackTsuribari::Hook do
         it { is_expected.to eq result }
       end
     end
+
+    describe '#nil?' do
+      context 'all attribute is nil' do
+        subject { described_class.new.nil? }
+
+        it { is_expected.to be true }
+      end
+
+      context 'some attribute is not nil' do
+        subject do
+          pre_payload = described_class.new
+          pre_payload.text = 'test'
+          pre_payload.nil?
+        end
+
+        it { is_expected.to be false }
+      end
+    end
   end
 
   describe '.config' do
@@ -154,6 +172,40 @@ RSpec.describe SlackTsuribari::Hook do
   end
 
   describe '#attach' do
+    context 'not detached and new payload is nil' do
+      subject do
+        described_class.config('https://test.co.jp/').yield_self do |hook|
+          hook.attach({ text: 'test' })
+          hook.attach(nil)
+        end
+      end
+
+      it { is_expected.to eq({ text: 'test' }) }
+    end
+
+    context 'payload is nil and pre_payload also nil' do
+      subject do
+        described_class.config('https://test.co.jp/').yield_self do |hook|
+          hook.attach(nil)
+        end
+      end
+
+      it { expect { subject }.to raise_error(SlackTsuribari::Hook::NoPayloadError) }
+    end
+
+    context 'payload is nil and pre_payload is not nil' do
+      subject do
+        hook = described_class.config do |config|
+          config.uri = 'https://test.co.jp/'
+          config.pre_payload.channel = 'test'
+        end
+        hook.attach(nil)
+        hook.payload
+      end
+
+      it { is_expected.to eq({ channel: 'test' }) }
+    end
+
     context 'no pre_payload setting' do
       subject do
         described_class.config('https://test.co.jp/').yield_self do |hook|

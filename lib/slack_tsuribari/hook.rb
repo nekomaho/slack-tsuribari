@@ -10,6 +10,10 @@ module SlackTsuribari
           hash[attr] = send(attr) unless send(attr).nil?
         end
       end
+
+      def nil?
+        %I[channel username text icon_url icon_emoji].all? { |attr| send(attr).nil? }
+      end
     end
 
     Config = Struct.new(
@@ -36,6 +40,8 @@ module SlackTsuribari
       end
     end
 
+    class NoPayloadError < StandardError; end
+
     attr_reader :config, :payload
 
     def initialize(config)
@@ -61,7 +67,10 @@ module SlackTsuribari
     end
 
     def attach(payload)
-      @payload = config.pre_payload.to_h.merge(payload)
+      return @payload if !@payload.nil? && payload.nil? # when not detached and new payload is nil
+      raise NoPayloadError if payload.nil? && config.pre_payload.nil?
+
+      @payload = config.pre_payload.to_h.merge(payload.nil? ? {} : payload)
     end
 
     def detach
