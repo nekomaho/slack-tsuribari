@@ -17,6 +17,9 @@ Or install it yourself as:
 
     $ gem install slack_tsuribari
 
+## Supported versions
+* Ruby 2.5.7+, 2.6.5+, 2.7.0+
+
 ## Usage
 To post a message to a slack an easy way, create a hook object and send data with Angler.easy_throw!.
 ```ruby
