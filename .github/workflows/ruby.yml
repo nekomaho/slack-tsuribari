@@ -3,21 +3,19 @@ name: gem test
 on: [push, pull_request]
 
 jobs:
-
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: [ '2.5.7', '2.6.5', '2.7.0' ]
+        ruby: [ '2.5', '2.6', '2.7' ]
 
     steps:
-      - uses: actions/checkout@v1
-
-      - name: Set up Ruby version
-        uses: actions/setup-ruby@master
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
 
+      - run: ruby -v
       - run: gem install bundler --no-document
       - run: bundle install --jobs 4 --retry 3
       - run: bundle exec rake spec
