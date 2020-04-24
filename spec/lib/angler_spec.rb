@@ -11,6 +11,7 @@ RSpec.describe SlackTsuribari::Angler do
       let(:hook) { SlackTsuribari::Hook.config('https://test.co.jp/hook') }
       let(:payload_result) { JSON.dump({ text: 'something' }) }
       let(:net_http_double) { instance_double(Net::HTTP) }
+      let(:response) { Net::HTTPOK.new('1.1', '200', 'OK') }
 
       before do
         allow(Net::HTTP).to receive(:new) do |host, port, _, _, _, _, _, _|
@@ -20,6 +21,7 @@ RSpec.describe SlackTsuribari::Angler do
         allow(net_http_double).to receive(:use_ssl=)
         allow(net_http_double).to receive(:post) do |path, data, _|
           @path_data_result = [path, data]
+          response
         end
       end
 
@@ -44,6 +46,7 @@ RSpec.describe SlackTsuribari::Angler do
       end
       let(:payload_result) { JSON.dump({ channel: 'test', username: 'name', icon_emoji: ':+1:', text: 'something' }) }
       let(:net_http_double) { instance_double(Net::HTTP) }
+      let(:response) { Net::HTTPOK.new('1.1', '200', 'OK') }
 
       before do
         allow(Net::HTTP).to receive(:new) do |host, port, _, _, _, _, _, _|
@@ -53,6 +56,7 @@ RSpec.describe SlackTsuribari::Angler do
         allow(net_http_double).to receive(:use_ssl=)
         allow(net_http_double).to receive(:post) do |path, data, _|
           @path_data_result = [path, data]
+          response
         end
       end
 
@@ -87,6 +91,7 @@ RSpec.describe SlackTsuribari::Angler do
       end
       let(:payload_result) { JSON.dump({ text: 'text' }) }
       let(:net_http_double) { instance_double(Net::HTTP) }
+      let(:response) { Net::HTTPOK.new('1.1', '200', 'OK') }
 
       before do
         allow(Net::HTTP).to receive(:new) do |host, port, _, _, _, _, _, _|
@@ -96,6 +101,7 @@ RSpec.describe SlackTsuribari::Angler do
         allow(net_http_double).to receive(:use_ssl=)
         allow(net_http_double).to receive(:post) do |path, data, _|
           @path_data_result = [path, data]
+          response
         end
       end
 
@@ -123,6 +129,7 @@ RSpec.describe SlackTsuribari::Angler do
       let(:payload) { { text: 'something' } }
       let(:payload_result) { JSON.dump({ text: 'something' }) }
       let(:net_http_double) { instance_double(Net::HTTP) }
+      let(:response) { Net::HTTPOK.new('1.1', '200', 'OK') }
 
       before do
         allow(Net::HTTP).to receive(:new) do |host, port, proxy_addr, proxy_port, proxy_user, proxy_pass, no_proxy|
@@ -132,6 +139,7 @@ RSpec.describe SlackTsuribari::Angler do
         allow(net_http_double).to receive(:use_ssl=)
         allow(net_http_double).to receive(:post) do |path, data, _|
           @path_data_result = [path, data]
+          response
         end
       end
 
@@ -140,6 +148,73 @@ RSpec.describe SlackTsuribari::Angler do
         expect(@host_port_result).to eq ['test.co.jp', 443, '127.0.0.1', 8080, 'test', 'password', '192.168.1.1']
         expect(@path_data_result).to eq ['/hook', payload_result]
         expect(hook.payload).to be_nil
+      end
+    end
+
+    context 'raise_error is specified' do
+      context 'when raise error true (default)' do
+        subject { described_class.easy_throw!(hook, 'something') }
+
+        let(:hook) do
+          SlackTsuribari::Hook.config('https://test.co.jp/hook')
+        end
+        let(:payload) { { text: 'something' } }
+        let(:payload_result) { JSON.dump({ text: 'something' }) }
+        let(:net_http_double) { instance_double(Net::HTTP) }
+        let(:response) { Net::HTTPForbidden.new('1.1', '403', 'Forbidden') }
+
+        before do
+          allow(Net::HTTP).to receive(:new) do |host, port, _, _, _, _, _|
+            @host_port_result = [host, port]
+            net_http_double
+          end
+          allow(net_http_double).to receive(:use_ssl=)
+          allow(net_http_double).to receive(:post) do |path, data, _|
+            @path_data_result = [path, data]
+            response
+          end
+        end
+
+        it 'host, port and data is correct and return 403 with raise error' do
+          expect { subject }.to raise_error(Net::HTTPClientException)
+          expect(@host_port_result).to eq ['test.co.jp', 443]
+          expect(@path_data_result).to eq ['/hook', payload_result]
+          expect(hook.payload).to be_nil
+        end
+      end
+
+      context 'when raise error false' do
+        subject { described_class.easy_throw!(hook, 'something') }
+
+        let(:hook) do
+          SlackTsuribari::Hook.config do |config|
+            config.uri = 'https://test.co.jp/hook'
+            config.raise_error = false
+          end
+        end
+        let(:payload) { { text: 'something' } }
+        let(:payload_result) { JSON.dump({ text: 'something' }) }
+        let(:net_http_double) { instance_double(Net::HTTP) }
+        let(:response) { Net::HTTPForbidden.new('1.1', '403', 'Forbidden') }
+
+        before do
+          allow(Net::HTTP).to receive(:new) do |host, port, _, _, _, _, _|
+            @host_port_result = [host, port]
+            net_http_double
+          end
+          allow(net_http_double).to receive(:use_ssl=)
+          allow(net_http_double).to receive(:post) do |path, data, _|
+            @path_data_result = [path, data]
+            response
+          end
+        end
+
+        it 'host, port and data is correct and return 403 without raise error' do
+          is_expected.to eq response
+          expect(@host_port_result).to eq ['test.co.jp', 443]
+          expect(@path_data_result).to eq ['/hook', payload_result]
+          expect(hook.payload).to be_nil
+        end
       end
     end
   end
@@ -159,6 +234,7 @@ RSpec.describe SlackTsuribari::Angler do
       let(:payload) { { text: 'test' } }
       let(:payload_result) { JSON.dump({ channel: 'test', username: 'name', icon_emoji: ':+1:', text: 'test' }) }
       let(:net_http_double) { instance_double(Net::HTTP) }
+      let(:response) { Net::HTTPOK.new('1.1', '200', 'OK') }
 
       before do
         allow(Net::HTTP).to receive(:new) do |host, port, _, _, _, _, _, _|
@@ -168,6 +244,7 @@ RSpec.describe SlackTsuribari::Angler do
         allow(net_http_double).to receive(:use_ssl=)
         allow(net_http_double).to receive(:post) do |path, data, _|
           @path_data_result = [path, data]
+          response
         end
       end
 
@@ -203,6 +280,7 @@ RSpec.describe SlackTsuribari::Angler do
       let(:payload) { nil }
       let(:payload_result) { JSON.dump({ text: 'pre payload text' }) }
       let(:net_http_double) { instance_double(Net::HTTP) }
+      let(:response) { Net::HTTPOK.new('1.1', '200', 'OK') }
 
       before do
         allow(Net::HTTP).to receive(:new) do |host, port, _, _, _, _, _, _|
@@ -212,6 +290,7 @@ RSpec.describe SlackTsuribari::Angler do
         allow(net_http_double).to receive(:use_ssl=)
         allow(net_http_double).to receive(:post) do |path, data, _|
           @path_data_result = [path, data]
+          response
         end
       end
 
@@ -230,6 +309,7 @@ RSpec.describe SlackTsuribari::Angler do
       let(:payload) { { text: 'test' } }
       let(:payload_result) { JSON.dump({ text: 'test' }) }
       let(:net_http_double) { instance_double(Net::HTTP) }
+      let(:response) { Net::HTTPOK.new('1.1', '200', 'OK') }
 
       before do
         allow(Net::HTTP).to receive(:new) do |host, port, _, _, _, _, _, _|
@@ -239,6 +319,7 @@ RSpec.describe SlackTsuribari::Angler do
         allow(net_http_double).to receive(:use_ssl=)
         allow(net_http_double).to receive(:post) do |path, data, _|
           @path_data_result = [path, data]
+          response
         end
       end
 
@@ -266,6 +347,7 @@ RSpec.describe SlackTsuribari::Angler do
       let(:payload) { { text: 'something' } }
       let(:payload_result) { JSON.dump({ text: 'something' }) }
       let(:net_http_double) { instance_double(Net::HTTP) }
+      let(:response) { Net::HTTPOK.new('1.1', '200', 'OK') }
 
       before do
         allow(Net::HTTP).to receive(:new) do |host, port, proxy_addr, proxy_port, proxy_user, proxy_pass, no_proxy|
@@ -275,6 +357,7 @@ RSpec.describe SlackTsuribari::Angler do
         allow(net_http_double).to receive(:use_ssl=)
         allow(net_http_double).to receive(:post) do |path, data, _|
           @path_data_result = [path, data]
+          response
         end
       end
 
@@ -283,6 +366,70 @@ RSpec.describe SlackTsuribari::Angler do
         expect(@host_port_result).to eq ['test.co.jp', 443, '127.0.0.1', 8080, 'test', 'password', '192.168.1.1']
         expect(@path_data_result).to eq ['/hook', payload_result]
         expect(hook.payload).to be_nil
+      end
+    end
+
+    context 'raise_error is specified' do
+      context 'when raise error true (default)' do
+        subject { described_class.throw!(hook, payload) }
+
+        let(:hook) { SlackTsuribari::Hook.config('https://test.co.jp/hook') }
+        let(:payload) { { text: 'test' } }
+        let(:payload_result) { JSON.dump({ text: 'test' }) }
+        let(:net_http_double) { instance_double(Net::HTTP) }
+        let(:response) { Net::HTTPForbidden.new('1.1', '403', 'Forbidden') }
+
+        before do
+          allow(Net::HTTP).to receive(:new) do |host, port, _, _, _, _, _|
+            @host_port_result = [host, port]
+            net_http_double
+          end
+          allow(net_http_double).to receive(:use_ssl=)
+          allow(net_http_double).to receive(:post) do |path, data, _|
+            @path_data_result = [path, data]
+            response
+          end
+        end
+
+        it 'host, port and data is correct and return 403 with raise error' do
+          expect { subject }.to raise_error(Net::HTTPClientException)
+          expect(@host_port_result).to eq ['test.co.jp', 443]
+          expect(@path_data_result).to eq ['/hook', payload_result]
+          expect(hook.payload).to be_nil
+        end
+      end
+
+      context 'when raise error false' do
+        subject { described_class.throw!(hook, payload) }
+        let(:hook) do
+          SlackTsuribari::Hook.config do |config|
+            config.uri = 'https://test.co.jp/hook'
+            config.raise_error = false
+          end
+        end
+        let(:payload) { { text: 'test' } }
+        let(:payload_result) { JSON.dump({ text: 'test' }) }
+        let(:net_http_double) { instance_double(Net::HTTP) }
+        let(:response) { Net::HTTPForbidden.new('1.1', '403', 'Forbidden') }
+
+        before do
+          allow(Net::HTTP).to receive(:new) do |host, port, _, _, _, _, _|
+            @host_port_result = [host, port]
+            net_http_double
+          end
+          allow(net_http_double).to receive(:use_ssl=)
+          allow(net_http_double).to receive(:post) do |path, data, _|
+            @path_data_result = [path, data]
+            response
+          end
+        end
+
+        it 'host, port and data is correct and return 403 without raise error' do
+          is_expected.to eq response
+          expect(@host_port_result).to eq ['test.co.jp', 443]
+          expect(@path_data_result).to eq ['/hook', payload_result]
+          expect(hook.payload).to be_nil
+        end
       end
     end
   end
