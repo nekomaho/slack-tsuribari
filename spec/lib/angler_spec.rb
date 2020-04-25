@@ -162,6 +162,9 @@ RSpec.describe SlackTsuribari::Angler do
         let(:payload_result) { JSON.dump({ text: 'something' }) }
         let(:net_http_double) { instance_double(Net::HTTP) }
         let(:response) { Net::HTTPForbidden.new('1.1', '403', 'Forbidden') }
+        let(:raise_response) do
+          RUBY_VERSION < '2.6.0' ? Net::HTTPServerException : Net::HTTPClientException
+        end
 
         before do
           allow(Net::HTTP).to receive(:new) do |host, port, _, _, _, _, _|
@@ -176,7 +179,7 @@ RSpec.describe SlackTsuribari::Angler do
         end
 
         it 'host, port and data is correct and return 403 with raise error' do
-          expect { subject }.to raise_error(Net::HTTPClientException)
+          expect { subject }.to raise_error(raise_response)
           expect(@host_port_result).to eq ['test.co.jp', 443]
           expect(@path_data_result).to eq ['/hook', payload_result]
           expect(hook.payload).to be_nil
@@ -378,6 +381,9 @@ RSpec.describe SlackTsuribari::Angler do
         let(:payload_result) { JSON.dump({ text: 'test' }) }
         let(:net_http_double) { instance_double(Net::HTTP) }
         let(:response) { Net::HTTPForbidden.new('1.1', '403', 'Forbidden') }
+        let!(:raise_response) do
+          RUBY_VERSION < '2.6.0' ? Net::HTTPServerException : Net::HTTPClientException
+        end
 
         before do
           allow(Net::HTTP).to receive(:new) do |host, port, _, _, _, _, _|
@@ -392,7 +398,7 @@ RSpec.describe SlackTsuribari::Angler do
         end
 
         it 'host, port and data is correct and return 403 with raise error' do
-          expect { subject }.to raise_error(Net::HTTPClientException)
+          expect { subject }.to raise_error(raise_response)
           expect(@host_port_result).to eq ['test.co.jp', 443]
           expect(@path_data_result).to eq ['/hook', payload_result]
           expect(hook.payload).to be_nil

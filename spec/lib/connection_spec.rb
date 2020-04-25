@@ -87,12 +87,15 @@ RSpec.describe SlackTsuribari::Connection do
           let(:response) do
             Net::HTTPForbidden.new('1.1', '403', 'Forbidden')
           end
+          let(:raise_response) do
+            RUBY_VERSION < '2.6.0' ? Net::HTTPServerException : Net::HTTPClientException
+          end
 
           before do
             allow_any_instance_of(Net::HTTP).to receive(:post).and_return(response)
           end
 
-          it { expect { subject }.to raise_error(Net::HTTPClientException) }
+          it { expect { subject }.to raise_error(raise_response) }
         end
       end
 
