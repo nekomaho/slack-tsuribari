@@ -51,14 +51,81 @@ RSpec.describe SlackTsuribari::Connection do
   end
 
   describe '#post' do
-    subject { described_class.new('https://test.co.jp/test').post('{test: 1}') }
+    context 'check value at post' do
+      subject { described_class.new('https://test.co.jp/test').post('{test: 1}') }
 
-    before do
-      allow_any_instance_of(Net::HTTP).to receive(:post) do |_, path, data, header|
-        [path, data, header]
+      before do
+        allow_any_instance_of(Net::HTTP).to receive(:post) do |_, path, data, header|
+          @result = [path, data, header]
+          Net::HTTPOK.new('1.1', 200, 'OK')
+        end
+      end
+
+      it 'receive correct path, date and header' do
+        subject
+        expect(@result).to eq ['/test', '{test: 1}', 'Content-Type' => 'application/json']
       end
     end
 
-    it { is_expected.to eq ['/test', '{test: 1}', 'Content-Type' => 'application/json'] }
+    context 'response case' do
+      context 'when raise_error option is true' do
+        subject { described_class.new('https://test.co.jp/test').post('{test: 1}') }
+
+        context 'when return 2xx' do
+          let(:response) do
+            Net::HTTPOK.new('1.1', '200', 'OK')
+          end
+
+          before do
+            allow_any_instance_of(Net::HTTP).to receive(:post).and_return(response)
+          end
+
+          it { is_expected.to eq response }
+        end
+
+        context 'when return other than 2xx' do
+          let(:response) do
+            Net::HTTPForbidden.new('1.1', '403', 'Forbidden')
+          end
+          let(:raise_response) do
+            RUBY_VERSION < '2.6.0' ? Net::HTTPServerException : Net::HTTPClientException
+          end
+
+          before do
+            allow_any_instance_of(Net::HTTP).to receive(:post).and_return(response)
+          end
+
+          it { expect { subject }.to raise_error(raise_response) }
+        end
+      end
+
+      context 'when raise_error option is false' do
+        subject { described_class.new('https://test.co.jp/test', { raise_error: false }).post('{test: 1}') }
+
+        context 'when return 2xx' do
+          let(:response) do
+            Net::HTTPOK.new('1.1', '200', 'OK')
+          end
+
+          before do
+            allow_any_instance_of(Net::HTTP).to receive(:post).and_return(response)
+          end
+
+          it { is_expected.to eq response }
+        end
+
+        context 'when return other than 2xx' do
+          let(:response) do
+            Net::HTTPForbidden.new('1.1', '403', 'Forbidden')
+          end
+
+          before do
+            allow_any_instance_of(Net::HTTP).to receive(:post).and_return(response)
+          end
+
+          it { is_expected.to eq response }
+        end
+      end
+    end
   end
 end

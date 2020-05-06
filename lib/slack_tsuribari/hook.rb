@@ -24,12 +24,13 @@ module SlackTsuribari
       :proxy_pass,
       :no_proxy,
       :pre_payload,
+      :raise_error,
       keyword_init: true
     )
 
     class << self
       def config(uri = nil)
-        config = Config.new(pre_payload: PrePayload.new)
+        config = Config.new(pre_payload: PrePayload.new, raise_error: true)
 
         if block_given?
           yield(config)
@@ -52,13 +53,14 @@ module SlackTsuribari
       config.uri
     end
 
-    def proxy_setting
+    def setting
       {
         proxy_addr: config.proxy_addr,
         proxy_port: config.proxy_port,
         proxy_user: config.proxy_user,
         proxy_pass: config.proxy_pass,
-        no_proxy: config.no_proxy
+        no_proxy: config.no_proxy,
+        raise_error: config.raise_error
       }
     end
 

@@ -89,7 +89,8 @@ RSpec.describe SlackTsuribari::Hook do
       let(:result) do
         SlackTsuribari::Hook::Config.new(
           uri: 'https://test.co.jp/',
-          pre_payload: SlackTsuribari::Hook::PrePayload.new
+          pre_payload: SlackTsuribari::Hook::PrePayload.new,
+          raise_error: true
         )
       end
 
@@ -102,7 +103,8 @@ RSpec.describe SlackTsuribari::Hook do
       let(:result) do
         SlackTsuribari::Hook::Config.new(
           uri: 'https://test.co.jp/',
-          pre_payload: SlackTsuribari::Hook::PrePayload.new
+          pre_payload: SlackTsuribari::Hook::PrePayload.new,
+          raise_error: true
         )
       end
 
@@ -121,7 +123,8 @@ RSpec.describe SlackTsuribari::Hook do
       let(:result) do
         SlackTsuribari::Hook::Config.new(
           uri: 'https://test.co.jp/',
-          pre_payload: SlackTsuribari::Hook::PrePayload.new('test', 'test')
+          pre_payload: SlackTsuribari::Hook::PrePayload.new('test', 'test'),
+          raise_error: true
         )
       end
 
@@ -135,7 +138,7 @@ RSpec.describe SlackTsuribari::Hook do
     it { is_expected.to eq 'https://test.co.jp/' }
   end
 
-  describe '#proxy_setting' do
+  describe '#setting' do
     subject do
       described_class.config do |config|
         config.uri = 'https://test.co.jp/'
@@ -144,7 +147,8 @@ RSpec.describe SlackTsuribari::Hook do
         config.proxy_user = 'test'
         config.proxy_pass = 'password'
         config.no_proxy = '192.168.1.1'
-      end.proxy_setting
+        config.raise_error = false
+      end.setting
     end
 
     let(:result) do
@@ -153,7 +157,8 @@ RSpec.describe SlackTsuribari::Hook do
         proxy_port: 8080,
         proxy_user: 'test',
         proxy_pass: 'password',
-        no_proxy: '192.168.1.1'
+        no_proxy: '192.168.1.1',
+        raise_error: false
       }
     end
 
