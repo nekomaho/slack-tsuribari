@@ -20,12 +20,113 @@ Or install it yourself as:
 ## Supported versions
 * Ruby 2.5, 2.6, 2.7, 3.0
 
+
 ## Usage
+To post a message to a slack an easy way, setting webhook url and send data with .easy_throw
+```ruby
+SlackTsuribari.configure do
+  connection :default do |config|
+    config.uri = 'https://hooks.slack.com/services/webhook_url'
+  end
+end
+SlackTsuribari.post(message: 'test message')
+```
+
+Use SlackTsuribari.throw If you need a bit more control, like adding color.
+
+```ruby
+SlackTsuribari.configure do
+  connection :default do |config|
+    config.uri = 'https://hooks.slack.com/services/webhook_url'
+  end
+end
+
+messages = {
+  attachments: [
+    fallback: 'test message',
+    text: 'test message',
+    color: '#00FF00',
+  ]
+}
+SlackTsuribari.post(message: messages)
+```
+
+The second argument of throw! can specify the payload of slack's Incoming Webhook.
+See Setup Instructions of Incoming Webhook and [Adding secondary attachment](https://api.slack.com/messaging/composing/layouts#attachments)
+for arguments that can be specified in the payload.
+
+### proxy setting
+If a proxy is needed, it can be configured as follows
+
+```ruby
+hook = SlackTsuribari::Hook.config do |config|
+SlackTsuribari.configure do
+  connection :default do |config|
+    config.uri = 'https://hooks.slack.com/services/webhook_url'
+    config.proxy_addr = '127.0.0.1'
+    config.proxy_port = 8080
+    config.proxy_user = 'test'
+    config.proxy_pass = 'password'
+    config.no_proxy = '192.168.1.1'
+  end
+end
+SlackTsuribari.post(message: 'test message')
+```
+
+### pre payload setting
+In config you can also set the `channel`, `username`, `text` and icon to post.
+The `channel` is set when you change the channel to post.
+```ruby
+SlackTsuribari.configure do
+  connection :default do |config|
+    config.uri = 'https://hooks.slack.com/services/webhook_url'
+    config.pre_payload.channel = 'sample_channel'
+  end
+end
+SlackTsuribari.post(message: 'test message')
+```
+
+The `username` allows you to change the name of the post.
+```ruby
+SlackTsuribari.configure do
+  connection :default do |config|
+    config.uri = 'https://hooks.slack.com/services/webhook_url'
+    config.pre_payload.username = 'Robot'
+  end
+end
+SlackTsuribari.post(message: 'test message')
+```
+
+If you want to set an icon, put a value in either `icon_url` or `icon_emoji`.
+The `icon_url` is the URL of the icon.
+The `icon_emoji` is the text of the emoji to be set for the icon.
+```ruby
+SlackTsuribari.configure do
+  connection :default do |config|
+    config.uri = 'https://hooks.slack.com/services/webhook_url'
+    config.pre_payload.icon_url = 'path to icon url'
+  end
+end
+SlackTsuribari.post(message: 'test message')
+```
+
+```ruby
+SlackTsuribari.configure do
+  connection :default do |config|
+    config.uri = 'https://hooks.slack.com/services/webhook_url'
+    config.pre_payload.icon_emoji = ':+1:'
+  end
+end
+SlackTsuribari.post(message: 'test message')
+```
+
+## Old Usage
 To post a message to a slack an easy way, create a hook object and send data with Angler.easy_throw!.
 ```ruby
 hook = SlackTsuribari::Hook.config('https://hooks.slack.com/services/webhook_url')
 SlackTsuribari::Angler.easy_throw!(hook, 'test message')
 ```
+
 Use Angler.throw! If you need a bit more control, like adding color.
 
 ```ruby
