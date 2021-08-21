@@ -1,13 +1,16 @@
 name: gem test
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: [ '2.5.7', '2.6.5', '2.7.0', '2.5.8', '2.6.6', '2.7.1' ]
+        ruby: [2.5, 2.6, 2.7, 3.0]
 
     steps:
       - uses: actions/checkout@v2
